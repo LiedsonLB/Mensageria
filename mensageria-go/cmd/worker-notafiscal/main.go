@@ -7,18 +7,33 @@ import (
 	"syscall"
 
 	"mensageria-go/internal/config"
+	"mensageria-go/internal/database"
 	"mensageria-go/internal/queue"
 	"mensageria-go/internal/worker"
 )
 
 func main() {
 	cfg := config.Load()
+	
+	dbConfig := database.DBConfig{
+		Host:     cfg.DBHost,
+		Port:     cfg.DBPort,
+		User:     cfg.DBUser,
+		Password: cfg.DBPassword,
+		DBName:   cfg.DBName,
+	}
+	
+	db, err := database.NewConnection(dbConfig)
+	if err != nil {
+		log.Fatal("❌ Erro ao conectar ao banco:", err)
+	}
+	
 	rabbit := queue.NewRabbitMQ(cfg.RabbitURL)
 	
 	rabbit.SetupPubSub()
 	rabbit.CriarFilaNotaFiscal()
 
-	go worker.StartNotaFiscalWorker(rabbit)
+	go worker.StartNotaFiscalWorker(rabbit, db)
 
 	log.Println("🚀 Worker NOTA FISCAL iniciado")
 	log.Println("📌 Pressione CTRL+C para derrubar APENAS este worker")

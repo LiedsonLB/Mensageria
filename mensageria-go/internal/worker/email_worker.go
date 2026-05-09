@@ -1,3 +1,4 @@
+// internal/worker/email_worker.go
 package worker
 
 import (
@@ -8,14 +9,20 @@ import (
 
 	"mensageria-go/internal/model"
 	"mensageria-go/internal/queue"
+	"mensageria-go/internal/repository"
 	"mensageria-go/internal/service"
+
+	"gorm.io/gorm"
 )
 
 func StartEmailWorker(
 	rabbit *queue.RabbitMQ,
 	emailService *service.EmailService,
+	db *gorm.DB,
 ) {
 	log.Println("📧 Worker de Email: conectando à fila...")
+	
+	repo := repository.NewPedidoRepository(db)
 
 	msgs, err := rabbit.Consume("emails")
 	if err != nil {
@@ -33,7 +40,6 @@ func StartEmailWorker(
 			continue
 		}
 
-		// Extrair pedido do evento
 		pedidoData, err := json.Marshal(evento["pedido"])
 		if err != nil {
 			log.Printf("❌ Erro ao extrair pedido: %v", err)
@@ -58,12 +64,21 @@ func StartEmailWorker(
 			notaData = time.Now().Format("02/01/2006 15:04")
 		}
 
+		repo.UpdateStatus(pedido.ID, "ENVIANDO_EMAIL")
+		repo.AddStatusHistory(pedido.ID, "ENVIANDO_EMAIL", "Preparando envio de email")
+
+		produtos, err := pedido.GetProdutosList()
+		if err != nil {
+			log.Printf("❌ Erro ao obter produtos: %v", err)
+			continue
+		}
+
 		log.Printf("📧 Preparando email para pedido: %s - Cliente: %s", pedido.ID, pedido.Cliente)
 
 		emailData := model.EmailData{
 			PedidoID:   pedido.ID,
 			Cliente:    pedido.Cliente,
-			Produtos:   pedido.Produtos,
+			Produtos:   produtos,
 			ValorTotal: fmt.Sprintf("%.2f", pedido.ValorTotal),
 			Data:       notaData,
 			NotaURL:    notaURL,
@@ -72,8 +87,12 @@ func StartEmailWorker(
 		err = emailService.EnviarEmail(pedido.Email, emailData)
 		if err != nil {
 			log.Printf("❌ Erro ao enviar email para %s: %v", pedido.Email, err)
+			repo.AddStatusHistory(pedido.ID, "EMAIL_FALHOU", err.Error())
 			continue
 		}
+
+		repo.UpdateStatus(pedido.ID, "CONCLUIDO")
+		repo.AddStatusHistory(pedido.ID, "CONCLUIDO", "Pedido concluído com sucesso - Email enviado")
 
 		log.Printf("✅ Email enviado com sucesso para: %s (Pedido: %s)", pedido.Email, pedido.ID)
 	}

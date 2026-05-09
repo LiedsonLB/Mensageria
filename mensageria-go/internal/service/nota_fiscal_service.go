@@ -9,12 +9,14 @@ import (
 )
 
 func GerarNota(pedido model.Pedido) (model.NotaFiscal, error) {
+
+	produtos, _ := pedido.GetProdutosList()
 	
 	path, err := nf.GerarNFeXML(
 		pedido.ID,
 		pedido.Cliente,
 		pedido.Documento,
-		pedido.Produtos,
+		produtos,
 		pedido.ValorTotal,
 	)
 	if err != nil {

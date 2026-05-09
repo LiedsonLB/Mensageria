@@ -11,7 +11,6 @@ type StripeService struct{}
 
 func NewStripeService(cfg config.Config) *StripeService {
 
-	// 🔥 CONFIGURA STRIPE AQUI
 	stripe.Key = cfg.StripeKey
 
 	return &StripeService{}

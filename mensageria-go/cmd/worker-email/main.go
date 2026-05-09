@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"mensageria-go/internal/config"
+	"mensageria-go/internal/database"
 	"mensageria-go/internal/queue"
 	"mensageria-go/internal/service"
 	"mensageria-go/internal/worker"
@@ -14,6 +15,20 @@ import (
 
 func main() {
 	cfg := config.Load()
+	
+	dbConfig := database.DBConfig{
+		Host:     cfg.DBHost,
+		Port:     cfg.DBPort,
+		User:     cfg.DBUser,
+		Password: cfg.DBPassword,
+		DBName:   cfg.DBName,
+	}
+	
+	db, err := database.NewConnection(dbConfig)
+	if err != nil {
+		log.Fatal("❌ Erro ao conectar ao banco:", err)
+	}
+	
 	rabbit := queue.NewRabbitMQ(cfg.RabbitURL)
 	
 	rabbit.SetupPubSub()
@@ -21,7 +36,7 @@ func main() {
 
 	emailService := service.NewEmailService(cfg)
 
-	go worker.StartEmailWorker(rabbit, emailService)
+	go worker.StartEmailWorker(rabbit, emailService, db)
 
 	log.Println("🚀 Worker EMAIL iniciado")
 	log.Println("📌 Pressione CTRL+C para derrubar APENAS este worker")

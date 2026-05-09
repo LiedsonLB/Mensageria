@@ -1,3 +1,4 @@
+// internal/worker/pagamento_worker.go
 package worker
 
 import (
@@ -7,16 +8,21 @@ import (
 
 	"mensageria-go/internal/model"
 	"mensageria-go/internal/queue"
+	"mensageria-go/internal/repository"
 	"mensageria-go/internal/service"
+
+	"gorm.io/gorm"
 )
 
 func StartPagamentoWorker(
 	rabbit *queue.RabbitMQ,
 	stripeService *service.StripeService,
+	db *gorm.DB,
 ) {
 	log.Println("🔄 Worker de Pagamento: conectando à fila...")
+	
+	repo := repository.NewPedidoRepository(db)
 
-	// Usar o método Consume simples
 	msgs, err := rabbit.Consume("pagamentos")
 	if err != nil {
 		log.Printf("❌ Erro ao consumir fila pagamentos: %v", err)
@@ -36,18 +42,25 @@ func StartPagamentoWorker(
 
 		log.Printf("💰 Processando pagamento do pedido: %s - Valor: R$ %.2f", pedido.ID, pedido.ValorTotal)
 
-		// Processar pagamento
+		repo.UpdateStatus(pedido.ID, "PROCESSANDO_PAGAMENTO")
+		repo.AddStatusHistory(pedido.ID, "PROCESSANDO_PAGAMENTO", "Iniciando processamento do pagamento")
+
 		err = stripeService.Pagar(pedido.ValorTotal)
 		if err != nil {
 			log.Printf("❌ Erro no pagamento do pedido %s: %v", pedido.ID, err)
+			repo.UpdateStatus(pedido.ID, "PAGAMENTO_FALHOU")
+			repo.AddStatusHistory(pedido.ID, "PAGAMENTO_FALHOU", err.Error())
 			continue
 		}
 
 		log.Printf("✅ Pagamento aprovado para pedido: %s", pedido.ID)
+		
+		repo.UpdateStatus(pedido.ID, "PAGAMENTO_APROVADO")
+		repo.AddStatusHistory(pedido.ID, "PAGAMENTO_APROVADO", "Pagamento aprovado com sucesso")
 
-		// Publicar evento de pagamento aprovado
 		evento := map[string]interface{}{
 			"evento":    "pagamento_aprovado",
+			"pedido_id": pedido.ID,
 			"pedido":    pedido,
 			"timestamp": time.Now(),
 		}
@@ -58,7 +71,6 @@ func StartPagamentoWorker(
 			continue
 		}
 
-		// Publicar na fila de notas fiscais
 		err = rabbit.Publish("notas_fiscais", body)
 		if err != nil {
 			log.Printf("⚠️ Erro ao publicar evento para nota fiscal: %v", err)
