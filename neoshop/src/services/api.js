@@ -45,7 +45,7 @@ export async function listarPedidos() {
     
     // Mapear os dados do backend para o formato esperado pelo frontend
     return pedidos.map(pedido => ({
-      id: pedido.id?.slice(0, 8).toUpperCase() || pedido.id,
+      id: pedido.id,
       cliente: pedido.cliente,
       email: pedido.email,
       valor_total: pedido.valor_total,
@@ -72,7 +72,7 @@ export async function buscarPedido(id) {
     const pedido = await response.json()
     
     return {
-      id: pedido.id?.slice(0, 8).toUpperCase() || pedido.id,
+      id: pedido.id,
       cliente: pedido.cliente,
       documento: pedido.documento,
       email: pedido.email,

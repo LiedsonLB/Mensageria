@@ -38,6 +38,7 @@ func StartNotaFiscalWorker(
 			continue
 		}
 
+		// Extrair o pedido do evento
 		pedidoData, err := json.Marshal(evento["pedido"])
 		if err != nil {
 			log.Printf("❌ Erro ao extrair pedido: %v", err)
@@ -51,7 +52,20 @@ func StartNotaFiscalWorker(
 			continue
 		}
 
-		log.Printf("📄 Gerando nota fiscal para pedido: %s", pedido.ID)
+		// IMPORTANTE: Garantir que os produtos estão sendo carregados
+		log.Printf("📦 Produtos no pedido: %+v", pedido.ProdutosList)
+		
+		// Se produtos estiver vazio, tentar carregar do banco
+		if len(pedido.ProdutosList) == 0 {
+			log.Printf("⚠️ Produtos não vieram no JSON, buscando do banco...")
+			pedidoCompleto, err := repo.FindByID(pedido.ID)
+			if err == nil && pedidoCompleto != nil {
+				pedido.ProdutosList = pedidoCompleto.ProdutosList
+				log.Printf("✅ Produtos carregados do banco: %d itens", len(pedido.ProdutosList))
+			}
+		}
+
+		log.Printf("📄 Gerando nota fiscal para pedido: %s - Produtos: %d", pedido.ID, len(pedido.ProdutosList))
 
 		repo.UpdateStatus(pedido.ID, "GERANDO_NF")
 		repo.AddStatusHistory(pedido.ID, "GERANDO_NF", "Emitindo nota fiscal eletrônica")
@@ -70,10 +84,17 @@ func StartNotaFiscalWorker(
 		repo.UpdateNotaFiscal(pedido.ID, nota.Arquivo)
 		repo.AddStatusHistory(pedido.ID, "NF_EMITIDA", "Nota fiscal emitida com sucesso")
 
+		// Buscar o pedido completo novamente para garantir que os produtos estão lá
+		pedidoCompleto, err := repo.FindByID(pedido.ID)
+		if err != nil {
+			log.Printf("⚠️ Erro ao buscar pedido completo: %v", err)
+			pedidoCompleto = &pedido
+		}
+
 		eventoEmail := map[string]interface{}{
 			"evento":    "nota_fiscal_gerada",
 			"pedido_id": pedido.ID,
-			"pedido":    pedido,
+			"pedido":    pedidoCompleto,
 			"nota_url":  notaURL,
 			"nota_data": nota.Data.Format("02/01/2006 15:04"),
 			"timestamp": time.Now(),

@@ -1,275 +1,277 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<style>
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-}
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
 
-.container {
-    max-width: 650px;
-    margin: auto;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
+        .container {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
-.header {
-    background: linear-gradient(135deg, #00b4db, #0083b0);
-    color: white;
-    padding: 30px;
-    text-align: center;
-}
+        .header {
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
 
-.header h1 {
-    margin: 0;
-    font-size: 24px;
-}
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
 
-.header p {
-    margin: 10px 0 0;
-    opacity: 0.9;
-}
+        .header p {
+            margin: 10px 0 0;
+            opacity: 0.9;
+        }
 
-.content {
-    padding: 30px;
-}
+        .content {
+            padding: 30px;
+        }
 
-.welcome {
-    margin-bottom: 25px;
-}
+        .welcome {
+            margin-bottom: 25px;
+        }
 
-.welcome h2 {
-    margin: 0 0 5px;
-    color: #333;
-}
+        .welcome h2 {
+            margin: 0 0 5px;
+            color: #333;
+        }
 
-.welcome p {
-    margin: 0;
-    color: #666;
-}
+        .welcome p {
+            margin: 0;
+            color: #666;
+        }
 
-.pedido-info {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-}
+        .pedido-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
 
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #e0e0e0;
-}
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
 
-.info-row:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
 
-.info-label {
-    font-weight: bold;
-    color: #555;
-}
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
 
-.info-value {
-    color: #333;
-}
+        .info-value {
+            color: #333;
+        }
 
-.produtos-titulo {
-    font-size: 18px;
-    font-weight: bold;
-    margin: 25px 0 15px;
-    color: #0083b0;
-    padding-bottom: 5px;
-    border-bottom: 2px solid #0083b0;
-    display: inline-block;
-}
+        .produtos-titulo {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 25px 0 15px;
+            color: #0083b0;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #0083b0;
+            display: inline-block;
+        }
 
-.tabela-produtos {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 15px 0 20px;
-}
+        .tabela-produtos {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 20px;
+        }
 
-.tabela-produtos th {
-    background: #0083b0;
-    color: white;
-    padding: 12px;
-    text-align: left;
-    font-weight: 600;
-}
+        .tabela-produtos th {
+            background: #0083b0;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
 
-.tabela-produtos td {
-    padding: 12px;
-    border-bottom: 1px solid #e0e0e0;
-    color: #555;
-}
+        .tabela-produtos td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #555;
+        }
 
-.tabela-produtos tr:last-child td {
-    border-bottom: none;
-}
+        .tabela-produtos tr:last-child td {
+            border-bottom: none;
+        }
 
-.tabela-produtos tr:hover {
-    background: #f8f9fa;
-}
+        .tabela-produtos tr:hover {
+            background: #f8f9fa;
+        }
 
-.total-row {
-    background: #f0f7fa;
-    font-weight: bold;
-    border-top: 2px solid #0083b0;
-}
+        .total-row {
+            background: #f0f7fa;
+            font-weight: bold;
+            border-top: 2px solid #0083b0;
+        }
 
-.total-row td {
-    padding: 15px 12px;
-    font-size: 16px;
-}
+        .total-row td {
+            padding: 15px 12px;
+            font-size: 16px;
+        }
 
-.status-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-}
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
 
-.nota-link {
-    display: inline-block;
-    background: #0083b0;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    margin-top: 10px;
-    transition: background 0.3s;
-}
+        .nota-link {
+            display: inline-block;
+            background: #0083b0;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
 
-.nota-link:hover {
-    background: #006d94;
-}
+        .nota-link:hover {
+            background: #006d94;
+        }
 
-.footer {
-    background: #f8f9fa;
-    padding: 20px;
-    text-align: center;
-    font-size: 12px;
-    color: #888;
-    border-top: 1px solid #e0e0e0;
-}
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #e0e0e0;
+        }
 
-.footer p {
-    margin: 5px 0;
-}
+        .footer p {
+            margin: 5px 0;
+        }
 
-@media (max-width: 600px) {
-    .container {
-        margin: 10px;
-    }
-    
-    .content {
-        padding: 20px;
-    }
-    
-    .tabela-produtos th,
-    .tabela-produtos td {
-        padding: 8px;
-        font-size: 14px;
-    }
-}
-</style>
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .tabela-produtos th,
+            .tabela-produtos td {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
+        <div class="header">
+            <h1>🛍️ NeoShop</h1>
+            <p>Seu Pedido foi Confirmado!</p>
+        </div>
 
-<div class="header">
-<h1>🛍️ NeoShop</h1>
-<p>Seu Pedido foi Confirmado!</p>
-</div>
+        <div class="content">
+            <div class="welcome">
+                <h2>Olá, {{.Cliente}}! 👋</h2>
+                <p>Agradecemos pela sua compra. Seu pedido foi processado com sucesso.</p>
+            </div>
 
-<div class="content">
+            <div class="pedido-info">
+                <div class="info-row">
+                    <span class="info-label">📋 Número do Pedido:</span>
+                    <span class="info-value"><strong>#{{.PedidoID}}</strong></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📅 Data do Pedido:</span>
+                    <span class="info-value">{{.Data}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">✅ Status:</span>
+                    <span class="info-value"><span class="status-badge">PEDIDO CONFIRMADO</span></span>
+                </div>
+            </div>
 
-<div class="welcome">
-<h2>Olá, {{.Cliente}}! 👋</h2>
-<p>Agradecemos pela sua compra. Seu pedido foi processado com sucesso.</p>
-</div>
+            <div class="produtos-titulo">
+                🛒 Itens do Pedido ({{len .Produtos}} produtos)
+            </div>
 
-<div class="pedido-info">
-<div class="info-row">
-    <span class="info-label">📋 Número do Pedido: </span>
-    <span class="info-value"><strong> #{{.PedidoID}}</strong></span>
-</div>
-<div class="info-row">
-    <span class="info-label">📅 Data do Pedido: </span>
-    <span class="info-value"> {{.Data}}</span>
-</div>
-<div class="info-row">
-    <span class="info-label">✅ Status: </span>
-    <span class="info-value"><span class="status-badge"> PEDIDO CONFIRMADO</span></span>
-</div>
-</div>
+            {{if .Produtos}}
+            <table class="tabela-produtos">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unit.</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Produtos}}
+                    <tr>
+                        <td>{{.Nome}}</td>
+                        <td>{{.Quantidade}}x</td>
+                        <td>R$ {{printf "%.2f" .Preco}}</td>
+                        <td>R$ {{printf "%.2f" .Subtotal}}</td>
+                    </tr>
+                    {{end}}
+                    <tr class="total-row">
+                        <td colspan="3" style="text-align: right;"><strong>💰 TOTAL DO PEDIDO:</strong></td>
+                        <td><strong>R$ {{.ValorTotal}}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            {{else}}
+            <p style="color: #666; text-align: center;">Nenhum produto encontrado neste pedido.</p>
+            {{end}}
 
-<div class="produtos-titulo">
-    🛒 Itens do Pedido
-</div>
+            <div style="text-align: center; margin: 30px 0 20px;">
+                <a href="{{.NotaURL}}" class="nota-link" target="_blank">
+                    📄 Visualizar Nota Fiscal (XML)
+                </a>
+            </div>
 
-<table class="tabela-produtos">
-    <thead>
-        <tr>
-            <th>Produto</th>
-            <th>Quantidade</th>
-            <th>Preço Unit.</th>
-            <th>Subtotal</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{range .Produtos}}
-        <tr>
-            <td>{{.Nome}}</td>
-            <td>{{.Quantidade}}x</td>
-            <td>R$ {{printf "%.2f" .Preco}}</td>
-            <td>R$ {{printf "%.2f" .Subtotal}}</td>
-        </tr>
-        {{end}}
-        <tr class="total-row">
-            <td colspan="3" style="text-align: right;"><strong>💰 TOTAL DO PEDIDO:</strong></td>
-            <td><strong>R$ {{.ValorTotal}}</strong></td>
-        </tr>
-    </tbody>
-</table>
+            <div style="background: #f0f7fa; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                <p style="margin: 0; color: #666; font-size: 13px; text-align: center;">
+                    💡 <strong>Dica:</strong> Você pode acompanhar seu pedido através da nossa central de atendimento.
+                </p>
+            </div>
+        </div>
 
-<div style="text-align: center; margin: 30px 0 20px;">
-    <a href="{{.NotaURL}}" class="nota-link" target="_blank" style="color: white; background-color: #666;">
-        📄 Visualizar Nota Fiscal (XML)
-    </a>
-</div>
-
-<div style="background: #f0f7fa; padding: 15px; border-radius: 8px; margin-top: 20px;">
-    <p style="margin: 0; color: #666; font-size: 13px; text-align: center;">
-        💡 <strong>Dica:</strong> Você pode acompanhar seu pedido através da nossa central de atendimento.
-    </p>
-</div>
-
-</div>
-
-<div class="footer">
-<p><strong>NeoShop Sistema</strong> • Tecnologia em Mensageria com RabbitMQ</p>
-<p>Este é um e-mail automático, por favor não responda.</p>
-<p>© 2024 NeoShop - Todos os direitos reservados</p>
-</div>
-
-</div>
+        <div class="footer">
+            <p><strong>NeoShop Sistema</strong> • Tecnologia em Mensageria com RabbitMQ</p>
+            <p>Este é um e-mail automático, por favor não responda.</p>
+            <p>© 2024 NeoShop - Todos os direitos reservados</p>
+        </div>
+    </div>
 
 </body>
+
 </html>

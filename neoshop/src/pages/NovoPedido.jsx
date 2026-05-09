@@ -1,19 +1,62 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { criarPedido } from '../services/api'
-import { produtos as catalogo } from '../data/produtos'
+import { produtos as catalogo, categorias, filtrarProdutos } from '../data/produtos'
+
+const categoryIcons = {
+  notebooks: '💻', perifericos: '🖱️', hardware: '🔧',
+  monitores: '🖥️', audio: '🎧', armazenamento: '💾', redes: '🌐',
+}
+
+// Chave para salvar no localStorage
+const STORAGE_KEY = 'neoShop_dadosCliente'
 
 export default function NovoPedido() {
   const navigate = useNavigate()
-  const [cliente, setCliente] = useState({ nome: '', documento: '', email: '' })
+
+  // Carregar dados do cliente do localStorage ao iniciar
+  const loadClienteData = () => {
+    const savedData = localStorage.getItem(STORAGE_KEY)
+    if (savedData) {
+      try {
+        return JSON.parse(savedData)
+      } catch (e) {
+        console.error('Erro ao carregar dados do cliente:', e)
+        return { nome: '', documento: '', email: '' }
+      }
+    }
+    return { nome: '', documento: '', email: '' }
+  }
+
+  const [cliente, setCliente] = useState(loadClienteData)
   const [itens, setItens] = useState([])
   const [busca, setBusca] = useState('')
+  const [categoria, setCategoria] = useState('todos')
   const [loading, setLoading] = useState(false)
   const [erro, setErro] = useState('')
+  const [mostrarNotificacao, setMostrarNotificacao] = useState(false)
 
-  const produtosFiltrados = catalogo.filter(p =>
-    !busca || p.nome.toLowerCase().includes(busca.toLowerCase())
-  ).slice(0, 8)
+  const produtosFiltrados = filtrarProdutos(busca, categoria)
+
+  // Salvar dados do cliente no localStorage sempre que mudar
+  const salvarDadosCliente = (novosDados) => {
+    setCliente(novosDados)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(novosDados))
+
+    // Mostrar notificação de salvamento
+    setMostrarNotificacao(true)
+    setTimeout(() => setMostrarNotificacao(false), 2000)
+  }
+
+  const handleClienteChange = (campo, valor) => {
+    const novosDados = { ...cliente, [campo]: valor }
+    salvarDadosCliente(novosDados)
+  }
+
+  const limparDadosCliente = () => {
+    const dadosVazios = { nome: '', documento: '', email: '' }
+    salvarDadosCliente(dadosVazios)
+  }
 
   const adicionarItem = (produto) => {
     setItens(prev => {
@@ -53,6 +96,12 @@ export default function NovoPedido() {
         produtos: itens.map(i => ({ nome: i.nome, preco: i.preco, quantidade: i.quantidade })),
       }
       const result = await criarPedido(payload)
+
+      console.log('ID completo do pedido:', result.id)
+
+      // Opcional: Limpar o carrinho após enviar o pedido
+      setItens([])
+
       navigate('/confirmacao', { state: { pedido: result } })
     } catch (e) {
       setErro(e.message || 'Erro ao conectar com o servidor.')
@@ -85,6 +134,28 @@ export default function NovoPedido() {
         </div>
       </div>
 
+      {/* Notificação de salvamento */}
+      {mostrarNotificacao && (
+        <div style={{
+          position: 'fixed',
+          top: 20,
+          right: 20,
+          background: 'var(--green)',
+          color: '#000',
+          padding: '10px 16px',
+          borderRadius: 'var(--radius)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          zIndex: 1000,
+          animation: 'slideIn 0.3s ease',
+          fontSize: 13
+        }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 18 }}>save</span>
+          Dados do cliente salvos automaticamente
+        </div>
+      )}
+
       {erro && (
         <div style={{ background: 'rgba(255,82,82,0.08)', border: '1px solid rgba(255,82,82,0.25)', borderRadius: 'var(--radius)', padding: '12px 16px', color: 'var(--red)', fontSize: 13, display: 'flex', gap: 10, alignItems: 'center' }}>
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>error</span>
@@ -97,69 +168,61 @@ export default function NovoPedido() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {/* Client data */}
           <div className="card" style={{ padding: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
-              <span className="material-symbols-outlined text-cyan">person</span>
-              <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 13 }}>Dados do Cliente</span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span className="material-symbols-outlined text-cyan">person</span>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 13 }}>Dados do Cliente</span>
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  className="icon-btn"
+                  onClick={limparDadosCliente}
+                  style={{ fontSize: 12, padding: '4px 8px' }}
+                  title="Limpar dados salvos"
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>delete_sweep</span>
+                </button>
+                {cliente.nome && (
+                  <span style={{ fontSize: 10, color: 'var(--green)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 12 }}>check_circle</span>
+                    Salvo
+                  </span>
+                )}
+              </div>
             </div>
             <div className="grid-2">
               <div>
                 <label className="input-label">Nome / Razão Social</label>
-                <input className="input-field" placeholder="ex: João da Silva Ltda." value={cliente.nome} onChange={e => setCliente(c => ({ ...c, nome: e.target.value }))} />
+                <input
+                  className="input-field"
+                  placeholder="ex: João da Silva Ltda."
+                  value={cliente.nome}
+                  onChange={e => handleClienteChange('nome', e.target.value)}
+                />
               </div>
               <div>
                 <label className="input-label">CPF / CNPJ</label>
-                <input className="input-field" placeholder="000.000.000-00" value={cliente.documento} onChange={e => setCliente(c => ({ ...c, documento: e.target.value }))} />
+                <input
+                  className="input-field"
+                  placeholder="000.000.000-00"
+                  value={cliente.documento}
+                  onChange={e => handleClienteChange('documento', e.target.value)}
+                />
               </div>
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="input-label">E-mail de Faturamento</label>
-                <input className="input-field" type="email" placeholder="cliente@empresa.com" value={cliente.email} onChange={e => setCliente(c => ({ ...c, email: e.target.value }))} />
+                <input
+                  className="input-field"
+                  type="email"
+                  placeholder="cliente@empresa.com"
+                  value={cliente.email}
+                  onChange={e => handleClienteChange('email', e.target.value)}
+                />
               </div>
             </div>
-          </div>
-
-          {/* Product search */}
-          <div className="card" style={{ padding: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span className="material-symbols-outlined text-cyan">inventory_2</span>
-                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 13 }}>Adicionar Produtos</span>
-              </div>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)' }}>{catalogo.length} produtos disponíveis</span>
-            </div>
-            <div style={{ position: 'relative', marginBottom: 16 }}>
-              <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 18, color: 'var(--text-faint)' }}>search</span>
-              <input className="input-field" style={{ paddingLeft: 36 }} placeholder="Buscar produto pelo nome..." value={busca} onChange={e => setBusca(e.target.value)} />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              {produtosFiltrados.map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => adicionarItem(p)}
-                  style={{
-                    background: 'var(--bg-elevated)',
-                    border: '1px solid var(--border)',
-                    borderRadius: 'var(--radius)',
-                    padding: '12px 14px',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    transition: 'all 0.15s',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: 8,
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--border-hover)'; e.currentTarget.style.background = 'var(--bg-high)' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--bg-elevated)' }}
-                >
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 2 }}>{p.nome}</div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--cyan)' }}>
-                      {p.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                    </div>
-                  </div>
-                  <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--text-faint)' }}>add_circle</span>
-                </button>
-              ))}
+            <div style={{ marginTop: 12, fontSize: 10, color: 'var(--text-faint)', textAlign: 'center' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 12, verticalAlign: 'middle' }}>info</span>
+              Seus dados são salvos localmente para agilizar próximos pedidos
             </div>
           </div>
 
@@ -171,6 +234,14 @@ export default function NovoPedido() {
                 <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 13 }}>
                   Itens do Pedido ({itens.length})
                 </span>
+                <button
+                  className="btn-ghost"
+                  style={{ marginLeft: 'auto', padding: '4px 8px', fontSize: 11 }}
+                  onClick={() => setItens([])}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 14 }}>delete_sweep</span>
+                  Limpar tudo
+                </button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {itens.map(item => (
@@ -197,6 +268,127 @@ export default function NovoPedido() {
               </div>
             </div>
           )}
+
+          {/* Product selection with catalog style */}
+          <div className="card" style={{ padding: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span className="material-symbols-outlined text-cyan">inventory_2</span>
+                <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: 13 }}>Selecionar Produtos</span>
+              </div>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)' }}>{catalogo.length} produtos disponíveis</span>
+            </div>
+
+            {/* Search and Filters */}
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+              <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
+                <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 18, color: 'var(--text-faint)' }}>search</span>
+                <input
+                  className="input-field"
+                  style={{ paddingLeft: 36 }}
+                  placeholder="Buscar produto..."
+                  value={busca}
+                  onChange={e => setBusca(e.target.value)}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {categorias.map(c => (
+                  <button
+                    key={c.id}
+                    onClick={() => setCategoria(c.id)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: 'var(--radius)',
+                      border: '1px solid',
+                      borderColor: categoria === c.id ? 'var(--cyan)' : 'var(--border)',
+                      background: categoria === c.id ? 'var(--cyan-dim)' : 'none',
+                      color: categoria === c.id ? 'var(--cyan)' : 'var(--text-muted)',
+                      fontSize: 11,
+                      fontFamily: 'var(--font-body)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: 14 }}>{c.icon}</span>
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Products Grid */}
+            {produtosFiltrados.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-faint)' }}>
+                <span className="material-symbols-outlined" style={{ fontSize: 36, display: 'block', marginBottom: 8 }}>search_off</span>
+                <p style={{ fontSize: 12 }}>Nenhum produto encontrado</p>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 12 }}>
+                {produtosFiltrados.map(p => (
+                  <div
+                    key={p.id}
+                    className="card"
+                    style={{
+                      padding: 14,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                      border: '1px solid var(--border)',
+                    }}
+                    onClick={() => adicionarItem(p)}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--cyan)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                      <div style={{ width: 40, height: 40, borderRadius: 'var(--radius)', background: 'var(--bg-elevated)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                        {p.image ? (
+                          <img src={p.image} alt={p.nome} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span style={{ fontSize: 20 }}>{categoryIcons[p.categoria] || '📦'}</span>
+                        )}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2 }}>{p.nome}</div>
+                        <div style={{ fontSize: 10, color: 'var(--text-faint)' }}>
+                          {categorias.find(c => c.id === p.categoria)?.label}
+                        </div>
+                      </div>
+                    </div>
+
+                    <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10, lineHeight: 1.4 }}>{p.descricao.substring(0, 60)}...</p>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 12, color: 'var(--amber)', fontVariationSettings: "'FILL' 1" }}>star</span>
+                      <span style={{ fontSize: 11, fontWeight: 600 }}>{p.rating}</span>
+                      <span style={{ fontSize: 10, color: 'var(--text-faint)' }}>({p.reviews})</span>
+                      <span style={{ marginLeft: 'auto', fontSize: 10, color: p.estoque > 10 ? 'var(--green)' : p.estoque > 0 ? 'var(--amber)' : 'var(--red)' }}>
+                        {p.estoque > 0 ? `${p.estoque} un` : 'Sem estoque'}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 800, color: 'var(--cyan)' }}>
+                        {p.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                      </div>
+                      <button
+                        className="btn-primary"
+                        style={{ padding: '4px 10px', fontSize: 11 }}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          adicionarItem(p)
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>add</span>
+                        Adicionar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right — Summary */}
@@ -261,6 +453,26 @@ export default function NovoPedido() {
           </button>
         </div>
       </div>
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes slideIn {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        .spin {
+          animation: spin 1s linear infinite;
+        }
+      `}</style>
     </div>
   )
 }

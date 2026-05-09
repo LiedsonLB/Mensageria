@@ -2,12 +2,12 @@ import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const navItems = [
-  { label: 'Dashboard', icon: 'dashboard', path: '/' },
+  // { label: 'Dashboard', icon: 'dashboard', path: '/' },
+  { label: 'Novo Pedido', icon: 'add_circle', path: '/' },
   { label: 'Pedidos', icon: 'shopping_cart', path: '/pedidos' },
-  { label: 'Novo Pedido', icon: 'add_circle', path: '/novo-pedido' },
-  { label: 'Catálogo', icon: 'inventory_2', path: '/catalogo' },
-  { label: 'Clientes', icon: 'group', path: '/clientes' },
-  { label: 'Configurações', icon: 'settings', path: '/configuracoes' },
+  // { label: 'Catálogo', icon: 'inventory_2', path: '/catalogo' },
+  // { label: 'Clientes', icon: 'group', path: '/clientes' },
+  // { label: 'Configurações', icon: 'settings', path: '/configuracoes' },
 ]
 
 export default function Layout({ children }) {
@@ -47,10 +47,7 @@ export default function Layout({ children }) {
 
       <div className="main-content">
         <header className="topbar">
-          <div className="topbar-search">
-            <span className="material-symbols-outlined">search</span>
-            <input placeholder="Buscar pedidos, clientes..." />
-          </div>
+          <div className="topbar-search"></div>
           <div className="topbar-right">
             <button className="icon-btn">
               <span className="material-symbols-outlined">notifications</span>
@@ -62,7 +59,7 @@ export default function Layout({ children }) {
                 alt="Avatar"
               />
               <div>
-                <div className="name">Alex Manager</div>
+                <div className="name">Francisco Liédson Bonfim Barros</div>
                 <div className="role">Admin</div>
               </div>
             </div>

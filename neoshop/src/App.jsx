@@ -12,7 +12,7 @@ export default function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<NovoPedido />} />
           <Route path="/pedidos" element={<HistoricoPedidos />} />
           <Route path="/novo-pedido" element={<NovoPedido />} />
           <Route path="/confirmacao" element={<Confirmacao />} />

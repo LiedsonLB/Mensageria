@@ -19,12 +19,12 @@ const statusLabel = {
   PENDENTE: 'Pendente',
   PROCESSANDO_PAGAMENTO: 'Processando Pagamento',
   PAGAMENTO_APROVADO: 'Pagamento Aprovado',
-  GERANDO_NF: 'Gerando NF',
+  GERANDO_NF: 'Gerando Nota Fiscal',
   NF_EMITIDA: 'NF Emitida',
-  ENVIANDO_EMAIL: 'Enviando Email',
+  ENVIANDO_EMAIL: 'Enviando E-mail',
   CONCLUIDO: 'Concluído',
-  PAGAMENTO_FALHOU: 'Falhou',
-  ERRO_GERAR_NF: 'Erro na NF',
+  PAGAMENTO_FALHOU: 'Pagamento Falhou',
+  ERRO_GERAR_NF: 'Erro na Nota Fiscal',
   CANCELADO: 'Cancelado',
 }
 
@@ -38,6 +38,14 @@ export default function HistoricoPedidos() {
 
   useEffect(() => {
     carregarPedidos()
+    
+    const interval = setInterval(() => {
+      if (!loading) {
+        carregarPedidos()
+      }
+    }, 10000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   const carregarPedidos = async () => {
@@ -62,16 +70,32 @@ export default function HistoricoPedidos() {
     return matchBusca && matchStatus
   })
 
-  const filtros = ['TODOS', 'PENDENTE', 'PROCESSANDO_PAGAMENTO', 'CONCLUIDO', 'PAGAMENTO_FALHOU']
+  const filtros = [
+    'TODOS', 
+    'PENDENTE', 
+    'PROCESSANDO_PAGAMENTO', 
+    'PAGAMENTO_APROVADO',
+    'GERANDO_NF',
+    'NF_EMITIDA',
+    'ENVIANDO_EMAIL',
+    'CONCLUIDO', 
+    'PAGAMENTO_FALHOU',
+    'CANCELADO'
+  ]
+  
   const filtroLabel = { 
     TODOS: 'Todos', 
     PENDENTE: 'Pendentes', 
-    PROCESSANDO_PAGAMENTO: 'Processando', 
+    PROCESSANDO_PAGAMENTO: 'Processando Pagamento',
+    PAGAMENTO_APROVADO: 'Pagamento Aprovado',
+    GERANDO_NF: 'Gerando NF',
+    NF_EMITIDA: 'NF Emitida',
+    ENVIANDO_EMAIL: 'Enviando Email',
     CONCLUIDO: 'Concluídos', 
-    PAGAMENTO_FALHOU: 'Falhas' 
+    PAGAMENTO_FALHOU: 'Pagamento Falhou',
+    CANCELADO: 'Cancelados'
   }
 
-  // Função para formatar data
   const formatarData = (dataISO) => {
     if (!dataISO) return '—'
     const data = new Date(dataISO)
@@ -84,21 +108,19 @@ export default function HistoricoPedidos() {
     })
   }
 
-  // Função para ver detalhes do pedido
   const verDetalhes = (pedido) => {
     navigate('/confirmacao', { state: { pedido } })
   }
 
-  // Função para recarregar os dados
   const recarregar = async () => {
     await carregarPedidos()
   }
 
-  // Calcular estatísticas
   const totalPedidos = pedidos.length
   const concluidos = pedidos.filter(p => p.status === 'CONCLUIDO').length
   const pendentes = pedidos.filter(p => p.status === 'PENDENTE' || p.status === 'PROCESSANDO_PAGAMENTO').length
-  const falhas = pedidos.filter(p => p.status === 'PAGAMENTO_FALHOU' || p.status === 'ERRO_GERAR_NF').length
+  const falhas = pedidos.filter(p => p.status === 'PAGAMENTO_FALHOU' || p.status === 'ERRO_GERAR_NF' || p.status === 'CANCELADO').length
+  const processando = pedidos.filter(p => p.status === 'PROCESSANDO_PAGAMENTO' || p.status === 'GERANDO_NF' || p.status === 'ENVIANDO_EMAIL').length
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
@@ -111,6 +133,9 @@ export default function HistoricoPedidos() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em' }}>
             Histórico de Pedidos
           </h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 4 }}>
+            {pedidos.length} pedidos no total · Atualização automática a cada 10s
+          </p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="btn-ghost" onClick={recarregar}>
@@ -124,13 +149,14 @@ export default function HistoricoPedidos() {
         </div>
       </div>
 
-      {/* Stats strip */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
+      {/* Stats strip - 5 cards para mostrar mais informações */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 16 }}>
         {[
           { label: 'Total de Pedidos', value: totalPedidos, color: 'var(--cyan)' },
           { label: 'Concluídos', value: concluidos, color: 'var(--green)' },
-          { label: 'Processando/Pendentes', value: pendentes, color: 'var(--amber)' },
-          { label: 'Falhas', value: falhas, color: 'var(--red)' },
+          { label: 'Em Processamento', value: processando, color: 'var(--cyan)' },
+          { label: 'Pendentes', value: pendentes, color: 'var(--amber)' },
+          { label: 'Falhas/Cancelados', value: falhas, color: 'var(--red)' },
         ].map(s => (
           <div className="stat-card" key={s.label} style={{ padding: 16, background: 'var(--bg-elevated)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
             <div className="stat-label" style={{ fontSize: 12, color: 'var(--text-muted)', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', marginBottom: 8 }}>{s.label}</div>
@@ -171,7 +197,7 @@ export default function HistoricoPedidos() {
               onChange={e => setBusca(e.target.value)}
             />
           </div>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', maxHeight: 100, overflowY: 'auto' }}>
             {filtros.map(f => (
               <button
                 key={f}
@@ -183,12 +209,13 @@ export default function HistoricoPedidos() {
                   borderColor: filtroStatus === f ? 'var(--cyan)' : 'var(--border)',
                   background: filtroStatus === f ? 'var(--cyan-dim)' : 'none',
                   color: filtroStatus === f ? 'var(--cyan)' : 'var(--text-muted)',
-                  fontSize: 12,
+                  fontSize: 11,
                   fontFamily: 'var(--font-mono)',
                   cursor: 'pointer',
                   transition: 'all 0.15s',
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 {filtroLabel[f]}
@@ -272,6 +299,13 @@ export default function HistoricoPedidos() {
           )}
         </div>
       </div>
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   )
 }

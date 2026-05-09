@@ -53,6 +53,13 @@ func StartEmailWorker(
 			continue
 		}
 
+		// Buscar pedido completo do banco para garantir os produtos
+		pedidoCompleto, err := repo.FindByID(pedido.ID)
+		if err != nil {
+			log.Printf("❌ Erro ao buscar pedido completo: %v", err)
+			continue
+		}
+
 		notaURL, ok := evento["nota_url"].(string)
 		if !ok {
 			log.Printf("❌ Nota URL não encontrada no evento")
@@ -64,36 +71,39 @@ func StartEmailWorker(
 			notaData = time.Now().Format("02/01/2006 15:04")
 		}
 
-		repo.UpdateStatus(pedido.ID, "ENVIANDO_EMAIL")
-		repo.AddStatusHistory(pedido.ID, "ENVIANDO_EMAIL", "Preparando envio de email")
+		log.Printf("📧 Preparando email para pedido: %s - Cliente: %s", pedidoCompleto.ID, pedidoCompleto.Cliente)
+		log.Printf("📦 Produtos: %d itens", len(pedidoCompleto.ProdutosList))
 
-		produtos, err := pedido.GetProdutosList()
-		if err != nil {
-			log.Printf("❌ Erro ao obter produtos: %v", err)
-			continue
+		repo.UpdateStatus(pedidoCompleto.ID, "ENVIANDO_EMAIL")
+		repo.AddStatusHistory(pedidoCompleto.ID, "ENVIANDO_EMAIL", "Preparando envio de email")
+
+		// Calcular subtotais se necessário
+		produtos := pedidoCompleto.ProdutosList
+		for i := range produtos {
+			produtos[i].Subtotal = produtos[i].Preco * float64(produtos[i].Quantidade)
 		}
 
-		log.Printf("📧 Preparando email para pedido: %s - Cliente: %s", pedido.ID, pedido.Cliente)
+		log.Printf("📧 Enviando email para: %s", pedidoCompleto.Email)
 
 		emailData := model.EmailData{
-			PedidoID:   pedido.ID,
-			Cliente:    pedido.Cliente,
+			PedidoID:   pedidoCompleto.ID,
+			Cliente:    pedidoCompleto.Cliente,
 			Produtos:   produtos,
-			ValorTotal: fmt.Sprintf("%.2f", pedido.ValorTotal),
+			ValorTotal: fmt.Sprintf("%.2f", pedidoCompleto.ValorTotal),
 			Data:       notaData,
 			NotaURL:    notaURL,
 		}
 
-		err = emailService.EnviarEmail(pedido.Email, emailData)
+		err = emailService.EnviarEmail(pedidoCompleto.Email, emailData)
 		if err != nil {
-			log.Printf("❌ Erro ao enviar email para %s: %v", pedido.Email, err)
-			repo.AddStatusHistory(pedido.ID, "EMAIL_FALHOU", err.Error())
+			log.Printf("❌ Erro ao enviar email para %s: %v", pedidoCompleto.Email, err)
+			repo.AddStatusHistory(pedidoCompleto.ID, "EMAIL_FALHOU", err.Error())
 			continue
 		}
 
-		repo.UpdateStatus(pedido.ID, "CONCLUIDO")
-		repo.AddStatusHistory(pedido.ID, "CONCLUIDO", "Pedido concluído com sucesso - Email enviado")
+		repo.UpdateStatus(pedidoCompleto.ID, "CONCLUIDO")
+		repo.AddStatusHistory(pedidoCompleto.ID, "CONCLUIDO", "Pedido concluído com sucesso - Email enviado")
 
-		log.Printf("✅ Email enviado com sucesso para: %s (Pedido: %s)", pedido.Email, pedido.ID)
+		log.Printf("✅ Email enviado com sucesso para: %s (Pedido: %s)", pedidoCompleto.Email, pedidoCompleto.ID)
 	}
 }
