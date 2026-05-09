@@ -18,17 +18,15 @@ var empresaConfig = struct {
 }{
 	Nome: "NeoShop Inc",
 	CNPJ: "88.115.590/0001-49",
-	UF:   "35", // SP
+	UF:   "22",
 }
 
 func GerarNFeXML(pedidoID string, cliente string, documento string, produtos []model.ProdutoItem, valorTotal float64) (string, error) {
 	
 	data := time.Now().Format("2006-01-02T15:04:05-07:00")
 	
-	// Limpar documento
 	docLimpo := strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(strings.ReplaceAll(documento, ".", ""), "-", ""), "/", ""), " ", "")
 	
-	// Determinar o tipo de documento
 	var tagDocumento string
 	var indIEDest string
 	
@@ -43,14 +41,11 @@ func GerarNFeXML(pedidoID string, cliente string, documento string, produtos []m
 		indIEDest = "9"
 	}
 	
-	// Construir os itens da nota fiscal usando o subtotal
 	itensXML := ""
 	for i, produto := range produtos {
 		quantidade := float64(produto.Quantidade)
-		// Usar o subtotal que já foi calculado
 		subtotal := produto.Subtotal
 		if subtotal == 0 {
-			// Fallback caso subtotal não tenha sido calculado
 			subtotal = produto.Preco * quantidade
 		}
 		
