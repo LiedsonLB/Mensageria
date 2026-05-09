@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmação de Pedido</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .pedido-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .pedido-info p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .status {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Pedido Confirmado!</h1>
+        </div>
+        <div class="content">
+            <h2>Olá, cliente!</h2>
+            <p>Seu pedido foi <strong>processado com sucesso</strong> e já está sendo preparado.</p>
+            
+            <div class="pedido-info">
+                <h3>📦 Detalhes do Pedido</h3>
+                <p><strong>Número do Pedido:</strong> #<span th:text="${pedidoId}"></span></p>
+                <p><strong>Produto:</strong> <span th:text="${produto}"></span></p>
+                <p><strong>Valor:</strong> R$ <span th:text="${valor}"></span></p>
+                <p><strong>Data:</strong> <span th:text="${#temporals.format(data, 'dd/MM/yyyy HH:mm')}"></span></p>
+                <p><strong>Status:</strong> <span class="status">CONFIRMADO</span></p>
+            </div>
+            
+            <p style="font-size: 14px; color: #666;">
+                ⚡ Este e-mail foi enviado em <strong>background</strong> enquanto você continuava navegando!
+            </p>
+        </div>
+        <div class="footer">
+            <p>Sistema de Mensageria - Grupo 1</p>
+            <p>Processamento Assíncrono com RabbitMQ</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: demo-mensageria
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mensageria
+    username: admin
+    password: admin123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+
+  # ============================================
+  # RABBITMQ
+  # ============================================
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin123
+    virtual-host: /
+
+  # ============================================
+  # E-MAIL (Gmail)
+  # ============================================
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USER:liedson.b9@gmail.com}
+    password: ${EMAIL_PASS:ncxgemjjmggqqpyz}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          timeout: 5000
+          connectiontimeout: 5000
+          writetimeout: 5000
+
+  # ============================================
+  # THYMELEAF (para templates de e-mail)
+  # ============================================
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+
+# ============================================
+# CONFIGURAÇÃO DA FILA
+# ============================================
+rabbitmq:
+  queue:
+    name: fila-pedidos
+
+# ============================================
+# CONFIGURAÇÃO DA API STRIPE
+# ============================================
+
+stripe:
+  api:
+    key: pk_test_51TUFNn1EASERDMgfHOWkNTnCwM1nt2A2Jh7rSRFVxRFP0DIEsq9PkBOzt7gKa6h6M2Sg5irNjTdJcU0h2nBXLWs7003rStK2rX
+
+# ============================================
+# LOGGING
+# ============================================
+logging:
+  level:
+    com.grupo1: DEBUG
+    org.springframework.amqp: INFO

@@ -1,0 +1,53 @@
+services:
+
+  # POSTGRESQL
+
+  db:
+    image: postgres:15-alpine
+    container_name: mensageria-db
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - mensageria_net
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mensageria
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d mensageria"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RABBITMQ
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: mensageria-rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - mensageria_net
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  mensageria_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  rabbitmq_data:

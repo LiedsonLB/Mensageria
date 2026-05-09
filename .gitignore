@@ -1,0 +1,22 @@
+# ignore do react
+node_modules/
+dist/
+build/
+# ignore do go
+bin/
+vendor/
+*.log
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+*.cover
+
+mensageria-go/cmd/api/notas-fiscais/
+mensageria-go/.env
+
+.env
+.env.*
