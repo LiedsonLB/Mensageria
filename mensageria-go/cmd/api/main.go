@@ -71,6 +71,7 @@ func main() {
 	router.GET("/pedidos", pedidoHandler.BuscarPedidos)
 	router.GET("/pedido/:id/status", pedidoHandler.BuscarStatus)
 	router.Static("/notas-fiscais", "./notas-fiscais")
+	router.Static("/notas-fiscais-pdf", "./notas-fiscais-pdf")
 	router.GET("/download/:id", func(c *gin.Context) {
 		id := c.Param("id")
 		filePath := fmt.Sprintf("notas-fiscais/%s.xml", id)

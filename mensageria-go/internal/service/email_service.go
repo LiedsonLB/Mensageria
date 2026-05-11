@@ -45,7 +45,7 @@ func (e *EmailService) EnviarEmail(
 	msg := ""
 	msg += "MIME-version: 1.0;\n"
 	msg += "Content-Type: text/html; charset=\"UTF-8\";\n"
-	msg += "Subject: ✅ Pedido Confirmado\n\n"
+	msg += "Subject: ✅ Seu Pedido foi Confirmado - Neoshop\n\n"
 	msg += body.String()
 
 	err = smtp.SendMail(

@@ -22,6 +22,9 @@ func StartNotaFiscalWorker(
 	
 	repo := repository.NewPedidoRepository(db)
 
+	// 🔥 DEBUG: Log antes de consumir
+	log.Println("🔄 Tentando consumir da fila 'notas_fiscais'...")
+	
 	msgs, err := rabbit.Consume("notas_fiscais")
 	if err != nil {
 		log.Printf("❌ Erro ao consumir fila de notas fiscais: %v", err)
@@ -29,8 +32,13 @@ func StartNotaFiscalWorker(
 	}
 
 	log.Println("✅ Worker de Nota Fiscal aguardando eventos...")
+	log.Println("📨 Aguardando mensagens na fila 'notas_fiscais'...")
 
 	for msg := range msgs {
+		// 🔥 DEBUG: Mensagem recebida
+		log.Println("📨 MENSAGEM RECEBIDA na fila notas_fiscais!")
+		log.Printf("📦 Body: %s", string(msg.Body))
+		
 		var evento map[string]interface{}
 		err := json.Unmarshal(msg.Body, &evento)
 		if err != nil {
@@ -52,10 +60,10 @@ func StartNotaFiscalWorker(
 			continue
 		}
 
-		// IMPORTANTE: Garantir que os produtos estão sendo carregados
-		log.Printf("📦 Produtos no pedido: %+v", pedido.ProdutosList)
-		
-		// Se produtos estiver vazio, tentar carregar do banco
+		log.Printf("📦 Pedido ID: %s", pedido.ID)
+		log.Printf("📦 Produtos: %d itens", len(pedido.ProdutosList))
+
+		// Se produtos estiver vazio, buscar do banco
 		if len(pedido.ProdutosList) == 0 {
 			log.Printf("⚠️ Produtos não vieram no JSON, buscando do banco...")
 			pedidoCompleto, err := repo.FindByID(pedido.ID)
@@ -65,11 +73,12 @@ func StartNotaFiscalWorker(
 			}
 		}
 
-		log.Printf("📄 Gerando nota fiscal para pedido: %s - Produtos: %d", pedido.ID, len(pedido.ProdutosList))
+		log.Printf("📄 Gerando XML da nota fiscal para pedido: %s - Produtos: %d", pedido.ID, len(pedido.ProdutosList))
 
 		repo.UpdateStatus(pedido.ID, "GERANDO_NF")
 		repo.AddStatusHistory(pedido.ID, "GERANDO_NF", "Emitindo nota fiscal eletrônica")
 
+		// Gerar XML da nota fiscal
 		nota, err := service.GerarNota(pedido)
 		if err != nil {
 			log.Printf("❌ Erro ao gerar nota fiscal: %v", err)
@@ -78,39 +87,33 @@ func StartNotaFiscalWorker(
 			continue
 		}
 
-		notaURL := "http://localhost:8080/" + nota.Arquivo
-		log.Printf("✅ Nota fiscal gerada: %s", nota.Arquivo)
+		log.Printf("✅ XML da nota fiscal gerado: %s", nota.Arquivo)
 
 		repo.UpdateNotaFiscal(pedido.ID, nota.Arquivo)
-		repo.AddStatusHistory(pedido.ID, "NF_EMITIDA", "Nota fiscal emitida com sucesso")
+		repo.AddStatusHistory(pedido.ID, "NF_EMITIDA", "XML da nota fiscal emitido com sucesso")
 
-		// Buscar o pedido completo novamente para garantir que os produtos estão lá
-		pedidoCompleto, err := repo.FindByID(pedido.ID)
-		if err != nil {
-			log.Printf("⚠️ Erro ao buscar pedido completo: %v", err)
-			pedidoCompleto = &pedido
-		}
-
-		eventoEmail := map[string]interface{}{
-			"evento":    "nota_fiscal_gerada",
-			"pedido_id": pedido.ID,
-			"pedido":    pedidoCompleto,
-			"nota_url":  notaURL,
-			"nota_data": nota.Data.Format("02/01/2006 15:04"),
-			"timestamp": time.Now(),
+		// Publicar evento para a SEFAZ validar
+		eventoSefaz := map[string]interface{}{
+			"evento":        "nota_fiscal.pronta",
+			"pedido_id":     pedido.ID,
+			"pedido":        pedido,
+			"xml_path":      nota.Arquivo,
+			"timestamp":     time.Now(),
 		}
 		
-		body, err := json.Marshal(eventoEmail)
+		body, err := json.Marshal(eventoSefaz)
 		if err != nil {
-			log.Printf("⚠️ Erro ao serializar evento de email: %v", err)
+			log.Printf("⚠️ Erro ao serializar evento: %v", err)
 			continue
 		}
 
-		err = rabbit.Publish("emails", body)
+		err = rabbit.Publish("nota_fiscal.pronta", body)
 		if err != nil {
-			log.Printf("⚠️ Erro ao publicar evento para email: %v", err)
+			log.Printf("⚠️ Erro ao publicar evento para SEFAZ: %v", err)
 		} else {
-			log.Printf("📧 Evento publicado para emails: %s", pedido.ID)
+			log.Printf("🏛️ Evento publicado para SEFAZ: %s", pedido.ID)
 		}
 	}
+	
+	log.Println("📴 Worker de Nota Fiscal finalizado")
 }
