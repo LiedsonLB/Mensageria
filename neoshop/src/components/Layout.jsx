@@ -1,13 +1,10 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import logo from '../assets/neoshop_icon.png'
 
 const navItems = [
-  { label: 'Dashboard', icon: 'dashboard', path: '/' },
+  { label: 'Novo Pedido', icon: 'add_circle', path: '/' },
   { label: 'Pedidos', icon: 'shopping_cart', path: '/pedidos' },
-  { label: 'Novo Pedido', icon: 'add_circle', path: '/novo-pedido' },
-  { label: 'Catálogo', icon: 'inventory_2', path: '/catalogo' },
-  { label: 'Clientes', icon: 'group', path: '/clientes' },
-  { label: 'Configurações', icon: 'settings', path: '/configuracoes' },
 ]
 
 export default function Layout({ children }) {
@@ -17,8 +14,21 @@ export default function Layout({ children }) {
   return (
     <div className="app-layout cyber-bg">
       <aside className="sidebar">
-        <div className="sidebar-logo">NeoShop</div>
-        <div className="sidebar-tagline">Enterprise Manager</div>
+        <div className="sidebar-logo">
+          <img
+            src={logo}
+            height={40}
+            width={40}
+            alt="NeoShop Logo"
+            style={{ 
+              borderRadius: '10px',
+              marginBottom: '8px'
+            }}
+          />
+          <div className="sidebar-tagline">
+            NeoShop
+          </div>
+        </div>
 
         <nav>
           {navItems.map(item => (
@@ -47,10 +57,7 @@ export default function Layout({ children }) {
 
       <div className="main-content">
         <header className="topbar">
-          <div className="topbar-search">
-            <span className="material-symbols-outlined">search</span>
-            <input placeholder="Buscar pedidos, clientes..." />
-          </div>
+          <div className="topbar-search"></div>
           <div className="topbar-right">
             <button className="icon-btn">
               <span className="material-symbols-outlined">notifications</span>
@@ -62,8 +69,8 @@ export default function Layout({ children }) {
                 alt="Avatar"
               />
               <div>
-                <div className="name">Alex Manager</div>
-                <div className="role">Admin</div>
+                <div className="name">Francisco Liédson</div>
+                <div className="role">Administrador</div>
               </div>
             </div>
           </div>

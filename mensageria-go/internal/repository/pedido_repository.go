@@ -2,8 +2,10 @@
 package repository
 
 import (
+	"fmt"
 	"mensageria-go/internal/model"
 	
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -16,22 +18,50 @@ func NewPedidoRepository(db *gorm.DB) *PedidoRepository {
 }
 
 func (r *PedidoRepository) Create(pedido *model.Pedido) error {
+	// Garantir que o ID é um UUID válido
+	if pedido.ID == "" {
+		pedido.ID = uuid.New().String()
+	}
+	
+	// Validar UUID antes de criar
+	if _, err := uuid.Parse(pedido.ID); err != nil {
+		return fmt.Errorf("ID inválido: %v", err)
+	}
+	
 	return r.db.Create(pedido).Error
 }
 
 func (r *PedidoRepository) FindByID(id string) (*model.Pedido, error) {
+	// Validar UUID antes de buscar
+	if _, err := uuid.Parse(id); err != nil {
+		return nil, fmt.Errorf("ID inválido: formato UUID esperado, recebido: %s", id)
+	}
+	
 	var pedido model.Pedido
-	err := r.db.First(&pedido, "id = ?", id).Error
-	return &pedido, err
+	err := r.db.Where("id = ?", id).First(&pedido).Error
+	if err != nil {
+		return nil, err
+	}
+	return &pedido, nil
 }
 
 func (r *PedidoRepository) UpdateStatus(id string, status string) error {
+	// Validar UUID
+	if _, err := uuid.Parse(id); err != nil {
+		return fmt.Errorf("ID inválido: formato UUID esperado")
+	}
+	
 	return r.db.Model(&model.Pedido{}).
 		Where("id = ?", id).
 		Update("status", status).Error
 }
 
 func (r *PedidoRepository) UpdateNotaFiscal(id string, notaFiscalPath string) error {
+	// Validar UUID
+	if _, err := uuid.Parse(id); err != nil {
+		return fmt.Errorf("ID inválido: formato UUID esperado")
+	}
+	
 	return r.db.Model(&model.Pedido{}).
 		Where("id = ?", id).
 		Updates(map[string]interface{}{
@@ -41,6 +71,11 @@ func (r *PedidoRepository) UpdateNotaFiscal(id string, notaFiscalPath string) er
 }
 
 func (r *PedidoRepository) AddStatusHistory(pedidoID string, status string, mensagem string) error {
+	// Validar UUID
+	if _, err := uuid.Parse(pedidoID); err != nil {
+		return fmt.Errorf("pedido_id inválido: formato UUID esperado")
+	}
+	
 	history := model.StatusHistory{
 		PedidoID: pedidoID,
 		Status:   status,
@@ -50,6 +85,10 @@ func (r *PedidoRepository) AddStatusHistory(pedidoID string, status string, mens
 }
 
 func (r *PedidoRepository) FindHistory(pedidoID string) ([]model.StatusHistory, error) {
+	if _, err := uuid.Parse(pedidoID); err != nil {
+		return nil, fmt.Errorf("pedido_id inválido: formato UUID esperado")
+	}
+	
 	var history []model.StatusHistory
 	err := r.db.Where("pedido_id = ?", pedidoID).
 		Order("created_at asc").

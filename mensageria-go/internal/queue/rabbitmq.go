@@ -392,6 +392,99 @@ func (r *RabbitMQ) CriarFilaNotaFiscal() error {
 	return err
 }
 
+func (r *RabbitMQ) CriarFilaNFeAutorizada() error {
+	ch, err := r.newChannel()
+	if err != nil {
+		return err
+	}
+	defer ch.Close()
+
+	_, err = ch.QueueDeclare(
+		"nfe.autorizada",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+
+	err = ch.QueueBind(
+		"nfe.autorizada",
+		"",
+		"pedidos_exchange",
+		false,
+		nil,
+	)
+
+	log.Println("✅ Fila nfe.autorizada criada")
+	return err
+}
+
+func (r *RabbitMQ) CriarFilaDanfeGerado() error {
+	ch, err := r.newChannel()
+	if err != nil {
+		return err
+	}
+	defer ch.Close()
+
+	_, err = ch.QueueDeclare(
+		"danfe.gerado",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+
+	err = ch.QueueBind(
+		"danfe.gerado",
+		"",
+		"pedidos_exchange",
+		false,
+		nil,
+	)
+
+	log.Println("✅ Fila danfe.gerado criada")
+	return err
+}
+
+func (r *RabbitMQ) CriarFilaNotaFiscalPronta() error {
+	ch, err := r.newChannel()
+	if err != nil {
+		return err
+	}
+	defer ch.Close()
+
+	_, err = ch.QueueDeclare(
+		"nota_fiscal.pronta",
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return err
+	}
+
+	err = ch.QueueBind(
+		"nota_fiscal.pronta",
+		"",
+		"pedidos_exchange",
+		false,
+		nil,
+	)
+
+	log.Println("✅ Fila nota_fiscal.pronta criada")
+	return err
+}
+
 /*
 ====================================================
 CONSUME COM RETRY (ACK MANUAL)

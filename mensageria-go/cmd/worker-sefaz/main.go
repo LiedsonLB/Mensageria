@@ -1,4 +1,3 @@
-// cmd/worker-notafiscal/main.go
 package main
 
 import (
@@ -32,17 +31,17 @@ func main() {
 	rabbit := queue.NewRabbitMQ(cfg.RabbitURL)
 	
 	rabbit.SetupPubSub()
-	rabbit.CriarFilaNotaFiscal()
 	rabbit.CriarFilaNotaFiscalPronta()
+	rabbit.CriarFilaNFeAutorizada()
 
-	go worker.StartNotaFiscalWorker(rabbit, db)
+	go worker.StartSefazWorker(rabbit, db)
 
-	log.Println("🚀 Worker NOTA FISCAL iniciado")
+	log.Println("🚀 Worker SEFAZ iniciado")
 	log.Println("📌 Pressione CTRL+C para derrubar APENAS este worker")
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 	<-sigChan
 	
-	log.Println("📴 Worker NOTA FISCAL desligado")
+	log.Println("📴 Worker SEFAZ desligado")
 }

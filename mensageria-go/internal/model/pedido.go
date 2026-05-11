@@ -1,6 +1,7 @@
 package model
 
 import (
+	"log"
 	"encoding/json"
 	"github.com/google/uuid"
 	"time"
@@ -52,7 +53,11 @@ func (p *Pedido) GetProdutosList() ([]ProdutoItem, error) {
 	var produtos []ProdutoItem
 	if p.Produtos != "" {
 		err := json.Unmarshal([]byte(p.Produtos), &produtos)
-		return produtos, err
+		if err != nil {
+			log.Printf("❌ Erro ao deserializar produtos: %v", err)
+			return produtos, err
+		}
+		log.Printf("✅ Produtos carregados: %d itens", len(produtos))
 	}
 	return produtos, nil
 }

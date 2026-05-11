@@ -1,275 +1,530 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<style>
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoShop - Confirmação de Pedido</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-.container {
-    max-width: 650px;
-    margin: auto;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
 
-.header {
-    background: linear-gradient(135deg, #00b4db, #0083b0);
-    color: white;
-    padding: 30px;
-    text-align: center;
-}
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.5s ease-out;
+        }
 
-.header h1 {
-    margin: 0;
-    font-size: 24px;
-}
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-.header p {
-    margin: 10px 0 0;
-    opacity: 0.9;
-}
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-.content {
-    padding: 30px;
-}
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
 
-.welcome {
-    margin-bottom: 25px;
-}
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
 
-.welcome h2 {
-    margin: 0 0 5px;
-    color: #333;
-}
+        .header h1 {
+            font-size: 32px;
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
+        }
 
-.welcome p {
-    margin: 0;
-    color: #666;
-}
+        .header p {
+            margin: 10px 0 0;
+            opacity: 0.95;
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
 
-.pedido-info {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-}
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 35px;
+            backdrop-filter: blur(10px);
+            animation: bounce 0.6s ease-out;
+        }
 
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #e0e0e0;
-}
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
 
-.info-row:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
+        .content {
+            padding: 35px 30px;
+        }
 
-.info-label {
-    font-weight: bold;
-    color: #555;
-}
+        .welcome {
+            margin-bottom: 25px;
+            text-align: center;
+        }
 
-.info-value {
-    color: #333;
-}
+        .welcome h2 {
+            font-size: 24px;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
 
-.produtos-titulo {
-    font-size: 18px;
-    font-weight: bold;
-    margin: 25px 0 15px;
-    color: #0083b0;
-    padding-bottom: 5px;
-    border-bottom: 2px solid #0083b0;
-    display: inline-block;
-}
+        .welcome p {
+            color: #718096;
+            font-size: 14px;
+        }
 
-.tabela-produtos {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 15px 0 20px;
-}
+        .pedido-info {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
 
-.tabela-produtos th {
-    background: #0083b0;
-    color: white;
-    padding: 12px;
-    text-align: left;
-    font-weight: 600;
-}
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
 
-.tabela-produtos td {
-    padding: 12px;
-    border-bottom: 1px solid #e0e0e0;
-    color: #555;
-}
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
 
-.tabela-produtos tr:last-child td {
-    border-bottom: none;
-}
+        .info-label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 13px;
+        }
 
-.tabela-produtos tr:hover {
-    background: #f8f9fa;
-}
+        .info-value {
+            color: #2d3748;
+            font-weight: 500;
+            font-size: 13px;
+        }
 
-.total-row {
-    background: #f0f7fa;
-    font-weight: bold;
-    border-top: 2px solid #0083b0;
-}
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
 
-.total-row td {
-    padding: 15px 12px;
-    font-size: 16px;
-}
+        .produtos-titulo {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 25px 0 15px;
+            color: #2d3748;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+            display: inline-block;
+        }
 
-.status-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-}
+        .tabela-produtos {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 20px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
 
-.nota-link {
-    display: inline-block;
-    background: #0083b0;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    margin-top: 10px;
-    transition: background 0.3s;
-}
+        .tabela-produtos th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+        }
 
-.nota-link:hover {
-    background: #006d94;
-}
+        .tabela-produtos td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            font-size: 13px;
+        }
 
-.footer {
-    background: #f8f9fa;
-    padding: 20px;
-    text-align: center;
-    font-size: 12px;
-    color: #888;
-    border-top: 1px solid #e0e0e0;
-}
+        .tabela-produtos tr:last-child td {
+            border-bottom: none;
+        }
 
-.footer p {
-    margin: 5px 0;
-}
+        .tabela-produtos tr:hover {
+            background: #f7fafc;
+        }
 
-@media (max-width: 600px) {
-    .container {
-        margin: 10px;
-    }
-    
-    .content {
-        padding: 20px;
-    }
-    
-    .tabela-produtos th,
-    .tabela-produtos td {
-        padding: 8px;
-        font-size: 14px;
-    }
-}
-</style>
+        .total-row td {
+            padding: 14px 12px;
+            font-size: 15px;
+            color: #f7fafc;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+
+        /* BOTÕES ESTILIZADOS */
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin: 35px 0 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.3px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-pdf {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+        }
+
+        .btn-pdf:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(239,68,68,0.4);
+        }
+
+        .btn-xml {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+        }
+
+        .btn-xml:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16,185,129,0.4);
+        }
+
+        .btn-danfe {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(59,130,246,0.3);
+        }
+
+        .btn-danfe:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59,130,246,0.4);
+        }
+
+        .btn i {
+            font-size: 18px;
+        }
+
+        .docs-info {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 25px;
+            border: 1px solid #bbf7d0;
+        }
+
+        .docs-info p {
+            margin: 8px 0;
+            color: #166534;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .docs-info .check {
+            width: 18px;
+            height: 18px;
+            background: #10b981;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: white;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 25px;
+            text-align: center;
+            font-size: 11px;
+            color: #6c757d;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .chave-acesso {
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            background: #f1f5f9;
+            padding: 6px 10px;
+            border-radius: 8px;
+            word-break: break-all;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                border-radius: 16px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .tabela-produtos th,
+            .tabela-produtos td {
+                padding: 8px;
+                font-size: 11px;
+            }
+
+            .btn-group {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+            }
+
+            .btn {
+                justify-content: center;
+                padding: 12px 20px;
+            }
+
+            .info-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .info-value {
+                word-break: break-all;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
+        <div class="header">
+            <h1>🛍️ NeoShop</h1>
+            <p>Seu Pedido foi Confirmado e Autorizado pela SEFAZ!</p>
+        </div>
 
-<div class="header">
-<h1>🛍️ NeoShop</h1>
-<p>Seu Pedido foi Confirmado!</p>
-</div>
+        <div class="content">
+            <div class="welcome">
+                <h2>Olá, {{.Cliente}}! 👋</h2>
+                <p>Agradecemos pela sua compra. Seu pedido foi processado e a Nota Fiscal Eletrônica foi autorizada.</p>
+            </div>
 
-<div class="content">
+            <!-- Informações do Pedido -->
+            <div class="pedido-info">
+                <div class="info-row">
+                    <span class="info-label">📋 Número do Pedido</span>
+                    <span class="info-value"><strong>#{{.PedidoID}}</strong></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">📅 Data do Pedido</span>
+                    <span class="info-value">{{.Data}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">✅ Status</span>
+                    <span class="info-value"><span class="status-badge">NOTA FISCAL AUTORIZADA</span></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">🔑 Chave de Acesso</span>
+                    <span class="info-value chave-acesso">{{.ChaveAcesso}}</span>
+                </div>
+            </div>
 
-<div class="welcome">
-<h2>Olá, {{.Cliente}}! 👋</h2>
-<p>Agradecemos pela sua compra. Seu pedido foi processado com sucesso.</p>
-</div>
+            <!-- Itens do Pedido -->
+            <div class="produtos-titulo">
+                🛒 Itens do Pedido ({{len .Produtos}})
+            </div>
 
-<div class="pedido-info">
-<div class="info-row">
-    <span class="info-label">📋 Número do Pedido: </span>
-    <span class="info-value"><strong> #{{.PedidoID}}</strong></span>
-</div>
-<div class="info-row">
-    <span class="info-label">📅 Data do Pedido: </span>
-    <span class="info-value"> {{.Data}}</span>
-</div>
-<div class="info-row">
-    <span class="info-label">✅ Status: </span>
-    <span class="info-value"><span class="status-badge"> PEDIDO CONFIRMADO</span></span>
-</div>
-</div>
+            {{if .Produtos}}
+            <table class="tabela-produtos">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Qtd</th>
+                        <th>Preço Unit.</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Produtos}}
+                    <tr>
+                        <td>{{.Nome}}</td>
+                        <td>{{.Quantidade}}x</td>
+                        <td>R$ {{printf "%.2f" .Preco}}</td>
+                        <td>R$ {{printf "%.2f" .Subtotal}}</td>
+                    </tr>
+                    {{end}}
+                    <tr class="total-row" style="cursor: none;">
+                        <td colspan="3" style="text-align: right;"><strong>TOTAL DO PEDIDO</strong></td>
+                        <td><strong>R$ {{.ValorTotal}}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            {{else}}
+            <p style="color: #666; text-align: center;">Nenhum produto encontrado</p>
+            {{end}}
 
-<div class="produtos-titulo">
-    🛒 Itens do Pedido
-</div>
+            <hr>
 
-<table class="tabela-produtos">
-    <thead>
-        <tr>
-            <th>Produto</th>
-            <th>Quantidade</th>
-            <th>Preço Unit.</th>
-            <th>Subtotal</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{range .Produtos}}
-        <tr>
-            <td>{{.Nome}}</td>
-            <td>{{.Quantidade}}x</td>
-            <td>R$ {{printf "%.2f" .Preco}}</td>
-            <td>R$ {{printf "%.2f" .Subtotal}}</td>
-        </tr>
-        {{end}}
-        <tr class="total-row">
-            <td colspan="3" style="text-align: right;"><strong>💰 TOTAL DO PEDIDO:</strong></td>
-            <td><strong>R$ {{.ValorTotal}}</strong></td>
-        </tr>
-    </tbody>
-</table>
+            <!-- Botões de Documentos -->
+            <div class="btn-group">
+                <a href="{{.NotaURL}}" class="btn btn-xml" target="_blank">
+                    📄 XML da Nota Fiscal
+                </a>
+                <a href="{{.DANFE_URL}}" class="btn btn-danfe" target="_blank">
+                    📑 DANFE (PDF)
+                </a>
+            </div>
 
-<div style="text-align: center; margin: 30px 0 20px;">
-    <a href="{{.NotaURL}}" class="nota-link" target="_blank" style="color: white; background-color: #666;">
-        📄 Visualizar Nota Fiscal (XML)
-    </a>
-</div>
+            <!-- Informações dos Documentos -->
+            <div class="docs-info">
+                <p>
+                    <span class="check">✓</span>
+                    <strong>XML da Nota Fiscal</strong> - Arquivo digital oficial para armazenamento e validação
+                </p>
+                <p>
+                    <span class="check">✓</span>
+                    <strong>DANFE (PDF)</strong> - Documento Auxiliar para impressão e acompanhamento da mercadoria
+                </p>
+                <p>
+                    <span class="check">✓</span>
+                    <strong>Protocolo SEFAZ</strong> - Autorização de Uso: {{.Protocolo}}
+                </p>
+                <p>
+                    <span class="check">✓</span>
+                    Ambiente de Homologação - Documento sem valor fiscal real
+                </p>
+            </div>
 
-<div style="background: #f0f7fa; padding: 15px; border-radius: 8px; margin-top: 20px;">
-    <p style="margin: 0; color: #666; font-size: 13px; text-align: center;">
-        💡 <strong>Dica:</strong> Você pode acompanhar seu pedido através da nossa central de atendimento.
-    </p>
-</div>
+            <!-- Dica -->
+            <div style="background: #fefce8; padding: 16px; border-radius: 12px; margin-top: 20px; border: 1px solid #fef08a;">
+                <p style="margin: 0; color: #854d0e; font-size: 13px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    💡 <strong>Dica:</strong> O DANFE pode ser impresso e acompanha a mercadoria. 
+                    O XML é o documento fiscal digital original.
+                </p>
+            </div>
+        </div>
 
-</div>
-
-<div class="footer">
-<p><strong>NeoShop Sistema</strong> • Tecnologia em Mensageria com RabbitMQ</p>
-<p>Este é um e-mail automático, por favor não responda.</p>
-<p>© 2024 NeoShop - Todos os direitos reservados</p>
-</div>
-
-</div>
+        <div class="footer">
+            <p><strong>NeoShop</strong> • Tecnologia em Mensageria com RabbitMQ</p>
+            <p>Nota Fiscal Eletrônica autorizada pela SEFAZ - Ambiente de Homologação</p>
+            <p>Este é um e-mail automático, por favor não responda.</p>
+            <p>© {{.Ano}} NeoShop - Todos os direitos reservados</p>
+        </div>
+    </div>
 
 </body>
+
 </html>

@@ -1,3 +1,4 @@
+// cmd/worker-email/main.go
 package main
 
 import (
@@ -32,7 +33,7 @@ func main() {
 	rabbit := queue.NewRabbitMQ(cfg.RabbitURL)
 	
 	rabbit.SetupPubSub()
-	rabbit.CriarFilaEmail()
+	rabbit.CriarFilaDanfeGerado()
 
 	emailService := service.NewEmailService(cfg)
 
