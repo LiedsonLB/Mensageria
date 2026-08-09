@@ -73,7 +73,6 @@ func StartPDFWorker(
 
 		pdfURL := "http://localhost:8080/notas-fiscais-pdf/" + pedidoID + "-danfe.pdf"
 
-		// Publicar evento para email com PDF anexado
 		eventoEmail := map[string]interface{}{
 			"evento":        "danfe.gerado",
 			"pedido_id":     pedidoID,

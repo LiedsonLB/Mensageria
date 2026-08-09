@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NFe xmlns="http://www.portalfiscal.inf.br/nfe">
+  <infNFe versao="4.00" Id="NFe25738043-4f1a-43cb-8652-51fa0f042690">
+    <ide>
+      <cUF>22</cUF>
+      <natOp>Venda de Produtos</natOp>
+      <mod>55</mod>
+      <serie>1</serie>
+      <nNF>25738043-4f1a-43cb-8652-51fa0f042690</nNF>
+      <dhEmi>2026-05-18T10:48:47-10:00</dhEmi>
+      <tpNF>1</tpNF>
+      <idDest>1</idDest>
+      <cMunFG>2208403</cMunFG>
+    </ide>
+    <emit>
+      <CNPJ>88.115.590/0001-49</CNPJ>
+      <xNome>NeoShop Inc</xNome>
+      <xFant>NeoShop Inc</xFant>
+      <enderEmit>
+        <xLgr>Rua da Tecnologia, 1000</xLgr>
+        <nro>1000</nro>
+        <xBairro>Centro</xBairro>
+        <cMun>2208403</cMun>
+        <xMun>Teresina</xMun>
+        <UF>PI</UF>
+        <CEP>64000000</CEP>
+      </enderEmit>
+    </emit>
+    <dest>
+      <xNome>Francisco Liédson</xNome>
+      <indIEDest>9</indIEDest>
+      <CPF>12345678900</CPF>
+      <enderDest>
+        <xLgr>Rua do Cliente</xLgr>
+        <nro>123</nro>
+        <xBairro>Centro</xBairro>
+        <cMun>2208403</cMun>
+        <xMun>Teresina</xMun>
+        <UF>PI</UF>
+      </enderDest>
+    </dest>
+    <det nItem="1">
+      <prod>
+        <cProd>001</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Notebook Gamer Legion 5i</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>2.0000</qCom>
+        <vUnCom>7499.99</vUnCom>
+        <vProd>14999.98</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>2.0000</qTrib>
+        <vUnTrib>7499.99</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="2">
+      <prod>
+        <cProd>002</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Notebook Pro Creator X1</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>2.0000</qCom>
+        <vUnCom>9999.99</vUnCom>
+        <vProd>19999.98</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>2.0000</qTrib>
+        <vUnTrib>9999.99</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="3">
+      <prod>
+        <cProd>003</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Ultrabook DellXPS 15</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>8249.00</vUnCom>
+        <vProd>8249.00</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>8249.00</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="4">
+      <prod>
+        <cProd>004</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Mouse Gamer Logitech G Pro X</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>549.90</vUnCom>
+        <vProd>549.90</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>549.90</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="5">
+      <prod>
+        <cProd>005</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Notebook HP Spectre x360</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>6899.00</vUnCom>
+        <vProd>6899.00</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>6899.00</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="6">
+      <prod>
+        <cProd>006</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Notebook Lenovo ThinkPad X1 Carbon</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>8799.00</vUnCom>
+        <vProd>8799.00</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>8799.00</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="7">
+      <prod>
+        <cProd>007</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Notebook Asus ROG Zephyrus</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>2.0000</qCom>
+        <vUnCom>11999.00</vUnCom>
+        <vProd>23998.00</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>2.0000</qTrib>
+        <vUnTrib>11999.00</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="8">
+      <prod>
+        <cProd>008</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Mouse Pad XXL SteelSeries QcK</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>189.90</vUnCom>
+        <vProd>189.90</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>189.90</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="9">
+      <prod>
+        <cProd>009</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Monitor Asus ROG Swift 27&quot; 360Hz</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>5299.00</vUnCom>
+        <vProd>5299.00</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>5299.00</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="10">
+      <prod>
+        <cProd>010</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>CPU AMD Ryzen 9 7950X</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>4299.00</vUnCom>
+        <vProd>4299.00</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>4299.00</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="11">
+      <prod>
+        <cProd>011</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Headset Gamer Razer BlackShark V2 Pro</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>899.00</vUnCom>
+        <vProd>899.00</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>899.00</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="12">
+      <prod>
+        <cProd>012</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Webcam Logitech Brio 4K</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>1299.00</vUnCom>
+        <vProd>1299.00</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>1299.00</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="13">
+      <prod>
+        <cProd>013</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Controle Xbox Elite Series 2</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>1099.00</vUnCom>
+        <vProd>1099.00</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>1099.00</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <det nItem="14">
+      <prod>
+        <cProd>014</cProd>
+        <cEAN>SEM GTIN</cEAN>
+        <xProd>Memória RAM DDR5 32GB Corsair Dominator</xProd>
+        <NCM>84713000</NCM>
+        <CFOP>5102</CFOP>
+        <uCom>UN</uCom>
+        <qCom>1.0000</qCom>
+        <vUnCom>999.00</vUnCom>
+        <vProd>999.00</vProd>
+        <cEANTrib>SEM GTIN</cEANTrib>
+        <uTrib>UN</uTrib>
+        <qTrib>1.0000</qTrib>
+        <vUnTrib>999.00</vUnTrib>
+        <indTot>1</indTot>
+      </prod>
+    </det>
+    <total>
+      <ICMSTot>
+        <vBC>0.00</vBC>
+        <vICMS>0.00</vICMS>
+        <vICMSDeson>0.00</vICMSDeson>
+        <vFCP>0.00</vFCP>
+        <vBCST>0.00</vBCST>
+        <vST>0.00</vST>
+        <vFCPST>0.00</vFCPST>
+        <vFCPSTRet>0.00</vFCPSTRet>
+        <vProd>97578.76</vProd>
+        <vFrete>0.00</vFrete>
+        <vSeg>0.00</vSeg>
+        <vDesc>0.00</vDesc>
+        <vII>0.00</vII>
+        <vIPI>0.00</vIPI>
+        <vIPIDevol>0.00</vIPIDevol>
+        <vPIS>0.00</vPIS>
+        <vCOFINS>0.00</vCOFINS>
+        <vOutro>0.00</vOutro>
+        <vNF>97578.76</vNF>
+      </ICMSTot>
+    </total>
+    <transp>
+      <modFrete>0</modFrete>
+    </transp>
+  
+    <protNFe versao="4.00">
+      <infProt>
+        <chNFe>35242605180000000000000010000000011000000010</chNFe>
+        <dhRecbto>2026-05-18T10:48:52-10:00</dhRecbto>
+        <nProt>1352402026051849679700</nProt>
+        <digVal>c98957497637b3d9648fce7fdc6296e5</digVal>
+        <cStat>100</cStat>
+        <xMotivo>Autorizado o uso da NF-e</xMotivo>
+      </infProt>
+    </protNFe>
+  </infNFe>
+</NFe>

@@ -252,7 +252,7 @@ func (r *RabbitMQ) PublicarPedido(pedido interface{}) error {
 
 /*
 ====================================================
-FILA PAGAMENTOS + DLQ
+FILA PAGAMENTOS
 ====================================================
 */
 
@@ -361,7 +361,6 @@ FILA NOTA FISCAL (CORRIGIDO)
 */
 
 func (r *RabbitMQ) CriarFilaNotaFiscal() error {
-	// ← CORREÇÃO: Usar newChannel() em vez de r.ch diretamente
 	ch, err := r.newChannel()
 	if err != nil {
 		return err

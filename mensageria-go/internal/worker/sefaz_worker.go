@@ -18,20 +18,22 @@ func StartSefazWorker(
 	rabbit *queue.RabbitMQ,
 	db *gorm.DB,
 ) {
-	log.Println("🏛️ Worker SEFAZ: conectando à fila...")
+	log.Println("🏛️ ========== WORKER SEFAZ ==========")
+	log.Println("🔄 Conectando à fila nota_fiscal.pronta...")
 	
 	repo := repository.NewPedidoRepository(db)
 
 	msgs, err := rabbit.Consume("nota_fiscal.pronta")
 	if err != nil {
-		log.Printf("❌ Erro ao consumir fila nota_fiscal.pronta: %v", err)
+		log.Printf("❌ Erro ao consumir fila: %v", err)
 		return
 	}
 
-	log.Println("✅ Worker SEFAZ aguardando notas para autorizacao...")
+	log.Println("✅ Worker SEFAZ aguardando notas para autorização...")
+	log.Println("📡 Protocolo: SOAP | WebService | Lote ASSÍNCRONO")
 
 	for msg := range msgs {
-		log.Println("📨 Mensagem recebida na fila nota_fiscal.pronta!")
+		log.Println("\n📨 ========== NOVA NOTA RECEBIDA ==========")
 		
 		var evento map[string]interface{}
 		err := json.Unmarshal(msg.Body, &evento)
@@ -53,22 +55,32 @@ func StartSefazWorker(
 			continue
 		}
 
-		log.Printf("🏛️ Enviando nota fiscal para SEFAZ: %s", pedido.ID)
+		log.Printf("📄 Pedido ID: %s", pedido.ID)
+		log.Printf("💰 Valor: R$ %.2f", pedido.ValorTotal)
 
-		repo.AddStatusHistory(pedido.ID, "ENVIANDO_SEFAZ", "Enviando nota para SEFAZ")
+		repo.AddStatusHistory(pedido.ID, "ENVIANDO_SEFAZ", "📤 Enviando nota para SEFAZ via SOAP")
 
 		xmlPath := fmt.Sprintf("notas-fiscais/%s.xml", pedido.ID)
+		
 		resposta, err := sefaz.EnviarNFe(xmlPath, pedido)
+		
 		if err != nil {
 			log.Printf("❌ Erro ao enviar para SEFAZ: %v", err)
 			repo.AddStatusHistory(pedido.ID, "ERRO_SEFAZ", err.Error())
 			continue
 		}
 
-		log.Printf("✅ Nota autorizada pela SEFAZ: %s - Protocolo: %s", pedido.ID, resposta.Protocolo)
+		log.Printf("\n✅ ========== NOTA AUTORIZADA PELA SEFAZ ==========")
+		log.Printf("📋 Status: %s", resposta.Status)
+		log.Printf("🔑 Chave de Acesso: %s", resposta.ChaveAcesso)
+		log.Printf("📄 Protocolo: %s", resposta.Protocolo)
+		log.Printf("📅 Data Autorização: %s", resposta.DataAutorizacao)
+		log.Printf("📦 Número do Lote: %s", resposta.NumeroLote)
+		log.Printf("📋 Recibo: %s", resposta.Recibo)
 
 		repo.AddStatusHistory(pedido.ID, "NF_AUTORIZADA", 
-			fmt.Sprintf("Nota autorizada pela SEFAZ. Protocolo: %s", resposta.Protocolo))
+			fmt.Sprintf("✅ Nota autorizada pela SEFAZ | Protocolo: %s | Chave: %s", 
+				resposta.Protocolo, resposta.ChaveAcesso[:20]))
 
 		eventoPDF := map[string]interface{}{
 			"evento":           "nfe.autorizada",
@@ -77,6 +89,8 @@ func StartSefazWorker(
 			"protocolo":        resposta.Protocolo,
 			"chave_acesso":     resposta.ChaveAcesso,
 			"data_autorizacao": resposta.DataAutorizacao,
+			"recibo":           resposta.Recibo,
+			"numero_lote":      resposta.NumeroLote,
 			"timestamp":        time.Now(),
 		}
 		
@@ -90,7 +104,7 @@ func StartSefazWorker(
 		if err != nil {
 			log.Printf("⚠️ Erro ao publicar evento para PDF: %v", err)
 		} else {
-			log.Printf("📄 Evento nfe.autorizada publicado para PDF: %s", pedido.ID)
+			log.Printf("📤 Evento nfe.autorizada publicado para PDF Worker")
 		}
 	}
 }
